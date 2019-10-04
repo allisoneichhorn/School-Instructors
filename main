@@ -1,0 +1,305 @@
+package javaapplication7;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.util.Scanner;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+/**
+ *
+ * @author allis
+ */
+public class JavaApplication7
+{
+	public static void main(String[] args)
+	{
+    	Scanner input = new Scanner(System.in);
+    	int choice;
+    	
+    	System.out.println("Reading File from Java code");
+    	
+    	String fileName1 = "C:\\Users\\allis\\Downloads\\department.txt";
+    	String fileName2 = "C:\\Users\\allis\\Downloads\\instructor.txt";
+   	
+    	ArrayList<Department> departmentsList = new ArrayList<>();
+    	ArrayList<Instructor> instructorsList = new ArrayList<>();
+   	
+    	try{
+        	FileReader inputFile1 = new FileReader(fileName1);
+        	FileReader inputFile2 = new FileReader(fileName2);
+      	
+        	BufferedReader departments = new BufferedReader(inputFile1);
+        	BufferedReader instructors = new BufferedReader(inputFile2);
+        	
+        	String line;
+        	String[] splitLine = new String[3];
+        	while ((line = departments.readLine()) != null) 
+        	{
+                	splitLine = line.split(",");
+                	
+                	Department addNew1 = new Department(splitLine[0], splitLine[1], Integer.valueOf(splitLine[2]));
+                	
+                	departmentsList.add(addNew1);
+        	}
+            	
+        	
+        	
+        	while ((line = instructors.readLine()) != null) 
+        	{
+                	splitLine = line.split(",");
+                	
+                	Instructor addNew2 = new Instructor(Integer.valueOf(splitLine[0]), splitLine[1], splitLine[2]);
+      	
+                	instructorsList.add(addNew2);
+          	
+        	}
+      	
+                	
+        	departments.close();
+        	
+        	instructors.close();
+      	
+    	}
+    	catch(Exception e)
+    	{
+        	System.out.println("Error while reading file line by line:" + e.getMessage());                  	
+    	}
+    	
+    	
+    	
+    	do
+    	{
+        	System.out.println("Menu:\n1. Enter the instructor ID and I will provide you with the name of the instructor, affiliated department and the location of that department.\n" +
+        	"2. Enter the department name and I will provide you with the location, budget and names of all instructors that work for the department.\n" +
+        	"3. Insert a record about a new instructor.\n" +
+        	"4. Exit");
+        	
+        	choice = input.nextInt();
+        	
+        	if (choice == 1)
+                	optionOne(departmentsList, instructorsList);
+        	else if (choice == 2)
+                	optionTwo(departmentsList, instructorsList);
+        	else if (choice == 3)
+                	optionThree(departmentsList, instructorsList);
+        	else if(choice != 4)
+                	System.out.println("Enter a valid option.");
+        	
+        	
+    	}while (choice != 4);
+    	
+    	System.out.println("Goodbye!");
+   	
+	}
+	
+	public static void optionOne(ArrayList<Department> departments, ArrayList<Instructor> instructors)
+	{
+        	Scanner input = new Scanner(System.in);
+        	
+        	System.out.println("Enter an instructor ID: ");
+        	int userInstructor = input.nextInt();
+        	
+        	boolean exists = false;
+        	
+        	for(int i = 0; i < instructors.size(); i++)
+        	{
+            	
+            	if(instructors.get(i).getId() == userInstructor)
+            	{
+                	System.out.println("Name: " + instructors.get(i).getName());
+                	System.out.println("Department: " + instructors.get(i).getDept());  
+                	exists = true;
+            	}
+        	}
+        	
+        	for(int i = 0; i < departments.size(); i++)
+        	{
+                	if (instructors.get(i).getId() == userInstructor && departments.get(i).getDept() == instructors.get(i).getDept())
+                	{
+                    	System.out.println("Location: " + departments.get(i).getBuilding());
+                	}
+                	
+        	}
+        	
+        	if (exists == false)
+            	System.out.println("That instructor ID does not exist.");
+	}
+	
+	public static void optionTwo(ArrayList<Department> departments, ArrayList<Instructor> instructors)
+	{        	
+    	Scanner input = new Scanner(System.in);
+    	System.out.println("Enter a department name: ");
+    	String userDepartment = input.nextLine();
+    	
+    	boolean exists = false;
+    	
+    	for(int i = 0; i < departments.size(); i++)
+    	{
+            	if (departments.get(i).getDept().equals(userDepartment))
+            	{
+                	System.out.println("Location: " + departments.get(i).getBuilding());
+                	System.out.println("Budget: " + departments.get(i).getBudget());
+                	exists = true;
+            	}
+    	}
+    	
+    	if(exists == true)
+        	System.out.println("Instructors in department: ");
+    	for(int i = 0; i < instructors.size(); i++)
+    	{
+        	if(instructors.get(i).getDept().equals(userDepartment))
+        	{
+            	System.out.println(instructors.get(i).getName());
+        	}
+    	}
+        	
+    	if (exists == false)
+        	System.out.println("The department name does not appear in the database.");
+        	
+	}
+	
+	public static void optionThree(ArrayList<Department> departments, ArrayList<Instructor> instructors)
+	{
+        	//for(int i = 0; i<instructors.size();i++)
+            	//System.out.println(instructors.get(i).getId());
+    	
+        	Scanner input = new Scanner(System.in);
+        	boolean check = false;
+        	
+        	System.out.println("Enter the instructor id: ");
+        	int newId = input.nextInt();
+        	input.nextLine();
+        	
+        	for (int i = 0; i < instructors.size(); i++)
+        	{
+                	if (instructors.get(i).getId() == newId)
+                	{
+                    	System.out.println("Instructor ID already exists in the file");
+                    	return;
+                	}
+        	}
+        	
+        	System.out.println("Enter the instructor name: ");
+        	String newName = input.nextLine();
+        	
+        	System.out.println("Enter the affiliated department name: ");
+        	String newDept = input.nextLine();
+        	
+        	for (int i = 0; i < departments.size(); i++)
+        	{
+                	if (departments.get(i).getDept().equals(newDept))
+                	{
+                    	check = true;
+                	}
+                	
+        	}
+        	
+        	if(check == false)
+            	System.out.println("The department does not exist and hence the instructor record cannot be added to the database");
+        	else
+        	{
+        	
+            	Instructor newInstructor = new Instructor(newId, newName, newDept);
+            	instructors.add(newInstructor);
+            	
+            	try
+            	{
+                    	String fileName = "C:\\Users\\allis\\Downloads\\instructor.txt";
+                    	FileWriter outputFile = new FileWriter(fileName, true);
+                    	BufferedWriter writeInstructors = new BufferedWriter(outputFile);
+                    	writeInstructors.newLine();
+                    	
+                    	writeInstructors.write(newId + "," + newName + "," + newDept);
+                    	writeInstructors.close();
+            	}
+            	catch (Exception e)
+            	{
+                    	System.err.println("Error: " + e.getMessage());
+            	}
+            	
+            	System.out.println("Instructor added. ");
+        	}
+ 
+	}
+      	
+}
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package javaapplication7;
+/**
+ *
+ * @author allis
+ */
+class Department
+{
+	String dept;
+	String building;
+	int budget;
+	
+	public Department(String dept, String building, int budget)
+	{
+    	this.dept = dept;
+    	this.building = building;
+    	this.budget = budget;
+	}
+	
+	public String getDept()
+	{
+    	return dept;
+	}
+	
+	public String getBuilding()
+	{
+    	return building;
+	}
+	
+	public int getBudget()
+	{
+    	return budget;
+	}
+}
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package javaapplication7;
+/**
+ *
+ * @author allis
+ */
+class Instructor
+{
+	int id;
+	String name;
+	String dept;
+	
+	public Instructor(int id, String name, String dept)
+	{
+    	this.id = id;
+    	this.name = name;
+    	this.dept = dept;
+	}
+	
+	public int getId()
+	{
+    	return id;
+	}
+	
+	public String getName()
+	{
+    	return name;
+	}
+	
+	public String getDept()
+	{
+    	return dept;
+	}
+     	
+}
+
